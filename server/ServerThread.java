@@ -43,14 +43,14 @@ public class ServerThread {
                 ){
 
             // read user input
-            JSONObject clientRequest = this.readUserInput(input);
+            JSONObject clientRequest;
+            while ((clientRequest = this.readUserInput(input)) != null) {
+                System.out.println(clientRequest.get("type") + "\n" + clientRequest.toString());
+                System.out.println("server received: " + clientRequest.toString());
 
-            System.out.println(clientRequest.get("type") + "\n" + clientRequest.toString());
-            System.out.println("server received: " + clientRequest.toString());
-
-            // send content back to client
-            output.println("Server received -> " + clientRequest.toString());
-
+                // send content back to client
+                output.println("Server received -> " + clientRequest.toString());
+            }
 
         } catch (IOException e) {
             e.printStackTrace();

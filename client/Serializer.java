@@ -49,7 +49,7 @@ public class Serializer {
                 break;
 
             default:
-                return "";
+                return "Invalid command";
         }
         return "";
     }

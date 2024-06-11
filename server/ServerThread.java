@@ -1,5 +1,7 @@
 package server;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,18 +18,38 @@ public class ServerThread {
         // define constructor for the Server thread
     }
 
+    public JSONObject readUserInput(BufferedReader input) throws IOException {
+        String clientInput;
+        StringBuilder clientIn = new StringBuilder();
+
+        // iterate until the end of the json data
+        while ((clientInput = input.readLine()) != null) {
+            clientIn.append(clientInput);
+
+            if (clientInput.equals("}")) {
+                break;
+            }
+        }
+
+        // load data into a json format
+        JSONObject jsonObject = new JSONObject(clientIn.toString());
+        return jsonObject;
+    }
+
     public void start() {
         try (
                 BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 PrintWriter output = new PrintWriter(socket.getOutputStream(), true)
                 ){
 
-            // read input from the client
-            String clientInput = input.readLine();
-            System.out.println("server received: " + clientInput);
+            // read user input
+            JSONObject clientRequest = this.readUserInput(input);
+
+            System.out.println(clientRequest.get("type") + "\n" + clientRequest.toString());
+            System.out.println("server received: " + clientRequest.toString());
 
             // send content back to client
-            output.println("Server received -> " + clientInput);
+            output.println("Server received -> " + clientRequest.toString());
 
 
         } catch (IOException e) {

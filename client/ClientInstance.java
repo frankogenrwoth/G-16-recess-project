@@ -10,6 +10,7 @@ public class ClientInstance {
     // define attributes for the ClientInstance object
     String hostname;
     int port;
+    String clientId;
 
     public ClientInstance(String hostname, int port) {
         // constructor class for the client instance
@@ -27,13 +28,18 @@ public class ClientInstance {
                 PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
                 BufferedReader consoleInput = new BufferedReader(new InputStreamReader(System.in));
             ) {
+            this.clientId = (String) socket.getInetAddress().getHostAddress();
+            Serializer serializer = new Serializer(false);
+
             System.out.println("Connection with server a success");
 
             // read command line input
+            System.out.print("[" + this.clientId + "] -> ");
             String userInput = consoleInput.readLine();
+            String serializedCommand = serializer.serialize(userInput);
 
             // send content to the server
-            output.println(userInput);
+            output.println(serializedCommand);
 
             // print server response
             String response = input.readLine();

@@ -50,8 +50,12 @@ public class ServerThread {
             while ((clientRequest = this.readUserInput(input)) != null) {
                 System.out.println(socket.getInetAddress().getHostAddress() + " - - " + clientRequest.toString());
 
+                Controller exec = new Controller(clientRequest);
+
+                String response = exec.run().toString();
+
                 // send content back to client
-                output.println(clientRequest.toString());
+                output.println(response);
             }
 
         } catch (IOException e) {

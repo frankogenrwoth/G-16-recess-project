@@ -32,18 +32,20 @@ public class ClientInstance {
             Serializer serializer = new Serializer(false);
 
             System.out.println("Connection with server a success");
-
-            // read command line input
             System.out.print("[" + this.clientId + "] -> ");
-            String userInput = consoleInput.readLine();
-            String serializedCommand = serializer.serialize(userInput);
+            // read command line input
 
-            // send content to the server
-            output.println(serializedCommand);
+            // Continuously read from the console and send to the server
+            String userInput;
+            while ((userInput = consoleInput.readLine()) != null) {
+                String serializedCommand = serializer.serialize(userInput);
 
-            // print server response
-            String response = input.readLine();
-            System.out.println("response: " + response);
+                output.println(serializedCommand);
+
+                String response = input.readLine();
+                System.out.println("response: " + response);
+                System.out.print("[" + this.clientId + "] -> ");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

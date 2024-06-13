@@ -36,7 +36,10 @@ public class ServerThread {
         return jsonObject;
     }
 
-    public void start() {
+    public void start() throws IOException {
+
+        System.out.println("Thread started");
+
         try (
                 BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 PrintWriter output = new PrintWriter(socket.getOutputStream(), true)
@@ -45,18 +48,22 @@ public class ServerThread {
             // read user input
             JSONObject clientRequest;
             while ((clientRequest = this.readUserInput(input)) != null) {
-                System.out.println(clientRequest.get("type") + "\n" + clientRequest.toString());
-                System.out.println("server received: " + clientRequest.toString());
+                System.out.println(socket.getInetAddress().getHostAddress() + " - - " + clientRequest.toString());
+
+                Controller exec = new Controller(clientRequest);
+
+                String response = exec.run().toString();
 
                 // send content back to client
-                output.println("Server received -> " + clientRequest.toString());
+                output.println(response);
             }
 
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
+        } finally {
+            socket.close();
         }
-        System.out.println("Thread started");
 
         // start a thread for communicating with the client continously
     }

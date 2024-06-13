@@ -12,7 +12,7 @@ public class Serializer {
 
     public String login(String[] arr) {
         JSONObject obj = new JSONObject();
-        obj.put("type", "login");
+        obj.put("command", "login");
         obj.put("isAuthenticated", false);
         obj.put("tokens", arr);
 
@@ -21,7 +21,7 @@ public class Serializer {
 
     public String register(String[] arr) {
         JSONObject obj = new JSONObject();
-        obj.put("type", "register");
+        obj.put("command", "register");
         obj.put("isAuthenticated", false);
         obj.put("tokens", arr);
 

@@ -1,5 +1,7 @@
 package client;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -38,12 +40,21 @@ public class ClientInstance {
             // Continuously read from the console and send to the server
             String userInput;
             while ((userInput = consoleInput.readLine()) != null) {
+                // send command to the server
                 String serializedCommand = serializer.serialize(userInput);
+                if (serializedCommand.equals("Invalid command")) {
+                    System.out.println(serializedCommand);
 
-                output.println(serializedCommand);
+                } else {
+                    output.println(serializedCommand);
 
-                String response = input.readLine();
-                System.out.println("response: " + response);
+                    // read response here from the server
+                    String response = input.readLine();
+                    System.out.println("response: " + response);
+                }
+
+
+                // prompt for the next instruction
                 System.out.print("[" + this.clientId + "] -> ");
             }
         } catch (Exception e) {

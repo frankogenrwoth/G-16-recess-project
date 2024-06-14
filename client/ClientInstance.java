@@ -7,17 +7,27 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.regex.Pattern;
 
 public class ClientInstance {
     // define attributes for the ClientInstance object
     String hostname;
     int port;
     String clientId;
+    boolean isStudent;
+    boolean isAuthenticated;
 
     public ClientInstance(String hostname, int port) {
         // constructor class for the client instance
         this.hostname = hostname;
         this.port = port;
+    }
+
+    public static boolean isValid(String input) {
+        String regex = "^\\{.*\\}$";
+        Pattern pattern = Pattern.compile(regex, Pattern.DOTALL);
+
+        return pattern.matcher(input).matches();
     }
 
     public void start() throws IOException {
@@ -31,7 +41,7 @@ public class ClientInstance {
                 BufferedReader consoleInput = new BufferedReader(new InputStreamReader(System.in));
             ) {
             this.clientId = (String) socket.getInetAddress().getHostAddress();
-            Serializer serializer = new Serializer(false);
+            Serializer serializer = new Serializer(false, false);
 
             System.out.println("Connection with server a success");
             System.out.print("[" + this.clientId + "] -> ");
@@ -42,15 +52,15 @@ public class ClientInstance {
             while ((userInput = consoleInput.readLine()) != null) {
                 // send command to the server
                 String serializedCommand = serializer.serialize(userInput);
-                if (serializedCommand.equals("Invalid command")) {
-                    System.out.println(serializedCommand);
-
-                } else {
+                if (isValid(serializedCommand)) {
                     output.println(serializedCommand);
 
                     // read response here from the server
                     String response = input.readLine();
                     System.out.println("response: " + response);
+
+                } else {
+                    System.out.println(serializedCommand);
                 }
 
 

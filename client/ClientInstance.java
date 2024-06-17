@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.regex.Pattern;
 
 public class ClientInstance {
@@ -69,6 +70,8 @@ public class ClientInstance {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            System.out.println("Connection with the server timeout");
         }
     }
 }

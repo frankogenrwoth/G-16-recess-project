@@ -1,6 +1,6 @@
 package server;
 
-import org.json.JSONObject;
+import org.json.*;
 
 public class Controller {
     JSONObject obj;
@@ -10,7 +10,29 @@ public class Controller {
     }
     private JSONObject login(JSONObject obj) {
         // logic to log in a user check the student db and then the representatives (!isAuthenticated)
-        return new JSONObject();
+        JSONObject output = new JSONObject();
+
+        if (obj.getBoolean("isAuthenticated")) {
+            output.put("reason", "user is already authenticated");
+            output.put("status", false);
+
+            return output;
+        }
+
+
+        // check the given credentials
+        Object arr = obj.get("tokens");
+        JSONArray tokens = new JSONArray(arr.toString());
+
+        String username = (String) tokens.get(1);
+        String email = (String) tokens.get(2);
+
+        output.put("status", true);
+        output.put("userId", 1);
+        output.put("isStudent", true);
+        output.put("username", username);
+        output.put("email", email);
+        return output;
     }
 
     private JSONObject register(JSONObject obj) {

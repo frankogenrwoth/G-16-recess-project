@@ -19,6 +19,7 @@ public class Serializer {
             return "Session already authenticated";
         }
 
+        // collect user login details
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter user login details (username and email)");
         System.out.print("Username: ");
@@ -52,8 +53,53 @@ public class Serializer {
         return obj.toString(4);
     }
 
-    public void logout() {
+    public String attemptChallenge(String[] tokens) {
+        JSONObject obj = new JSONObject();
+        obj.put("command", "attemptChallenge");
+        obj.put("isAuthenticated", false);
+        obj.put("tokens", tokens);
+        obj.put("isStudent", true);
+
+
+        return obj.toString(4);
+    }
+
+    public String viewApplicants() {
+        JSONObject obj = new JSONObject();
+        obj.put("command", "viewApplicants");
+        obj.put("isAuthenticated", false);
+        obj.put("tokens", JSONObject.NULL);
+        obj.put("isStudent", true);
+
+
+        return obj.toString(4);
+    }
+
+    public String confirm(String[] arr) {
+        JSONObject obj = new JSONObject();
+        obj.put("command", "confirm");
+        obj.put("isAuthenticated", false);
+        obj.put("tokens", arr);
+        obj.put("isStudent", true);
+
+
+        return obj.toString(4);
+    }
+
+    public String viewChallenges() {
+        JSONObject obj = new JSONObject();
+        obj.put("command", "viewChallenges");
+        obj.put("isAuthenticated", false);
+        obj.put("tokens", JSONObject.NULL);
+        obj.put("isStudent", true);
+
+
+        return obj.toString(4);
+    }
+
+    public String logout() {
         this.isAuthenticated = false;
+        return null;
     }
 
     public String serialize(String command) {
@@ -63,18 +109,44 @@ public class Serializer {
             return this.register(tokens);
         }
 
-        switch (tokens[0]) {
-            case "login":
-                return this.login();
-
-            case "logout":
-                this.logout();
-                break;
-
-            default:
-                return "Invalid command";
+        if (!isAuthenticated && tokens[0].equals("login")) {
+            return this.login();
         }
-        return "";
+
+        if (!isAuthenticated) {
+            return "Session unauthenticated first login by entering command login";
+        }
+
+        if (isStudent) {
+            switch (tokens[0]) {
+                case "logout":
+                    return this.logout();
+
+                case "viewChallenges":
+                    return this.viewChallenges();
+
+                case "attemptChallenge":
+                    return this.attemptChallenge(tokens);
+
+                default:
+                    return "Invalid student command";
+            }
+        } else {
+            switch (tokens[0]) {
+                case "logout":
+                    return this.logout();
+
+                case "confirm":
+                    return this.confirm(tokens);
+
+                case "viewApplicants":
+                    return this.viewApplicants();
+
+                default:
+                    return "Invalid school representative command";
+            }
+        }
+
     }
 
     public static void main (String[] args) {

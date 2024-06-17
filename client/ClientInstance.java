@@ -1,13 +1,10 @@
 package client;
 
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.regex.Pattern;
 
 public class ClientInstance {
@@ -15,13 +12,15 @@ public class ClientInstance {
     String hostname;
     int port;
     String clientId;
+    User user;
     boolean isStudent;
     boolean isAuthenticated;
 
-    public ClientInstance(String hostname, int port) {
+    public ClientInstance(String hostname, int port, User user) {
         // constructor class for the client instance
         this.hostname = hostname;
         this.port = port;
+        this.user = user;
     }
 
     public static boolean isValid(String input) {
@@ -42,10 +41,10 @@ public class ClientInstance {
                 BufferedReader consoleInput = new BufferedReader(new InputStreamReader(System.in));
             ) {
             this.clientId = (String) socket.getInetAddress().getHostAddress();
-            Serializer serializer = new Serializer(false, false);
+            Serializer serializer = new Serializer(this.user);
 
             System.out.println("Connection with server a success");
-            System.out.print("[" + this.clientId + "] -> ");
+            System.out.print("[" + this.clientId + "] (" + this.user.username + ") -> ");
             // read command line input
 
             // Continuously read from the console and send to the server
@@ -66,7 +65,7 @@ public class ClientInstance {
 
 
                 // prompt for the next instruction
-                System.out.print("[" + this.clientId + "] -> ");
+                System.out.print("[" + this.clientId + "] (" + this.user.username + ") -> ");
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -13,7 +13,8 @@ public class Client {
     }
 
     public ClientInstance startClientInstance() throws IOException {
-        ClientInstance clientInstance = new ClientInstance(hostname, port);
+        User user = new User();
+        ClientInstance clientInstance = new ClientInstance(hostname, port, user);
         clientInstance.start();
         return clientInstance;
     }

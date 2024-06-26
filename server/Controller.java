@@ -19,6 +19,8 @@ public class Controller {
             return output;
         }
 
+        output.put("command", "login");
+
 
         // check the given credentials
         Object arr = obj.get("tokens");

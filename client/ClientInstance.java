@@ -57,7 +57,9 @@ public class ClientInstance {
 
                     // read response here from the server
                     String response = input.readLine();
-                    System.out.println("response: " + response);
+                    ClientController clientController = new ClientController(user, response);
+                    this.user = clientController.exec();
+                    System.out.println("response: " + user.output);
 
                 } else {
                     System.out.println(serializedCommand);

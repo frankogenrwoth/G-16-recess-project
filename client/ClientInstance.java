@@ -43,7 +43,6 @@ public class ClientInstance {
             this.clientId = (String) socket.getInetAddress().getHostAddress();
             Serializer serializer = new Serializer(this.user);
 
-            System.out.println("Connection with server a success");
             System.out.print("[" + this.clientId + "] (" + this.user.username + ") -> ");
             // read command line input
 

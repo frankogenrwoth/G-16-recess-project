@@ -57,6 +57,18 @@ public class LocalStorage {
         return null;
     }
 
+    public String filterParticipantsByRegNo(String regNo) {
+        JSONArray jsonArray = this.read();
+        JSONArray output = new JSONArray();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            if (jsonObject.getString("regNo").equals(regNo)) {
+                output.put(jsonObject);
+            }
+        }
+        return output.toString();
+    }
+
     public void deleteEntryByName(String name) {
         JSONArray jsonArray = this.read();
         JSONArray updatedArray = new JSONArray();

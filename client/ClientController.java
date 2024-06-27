@@ -1,15 +1,14 @@
 package client;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ClientController {
     User user;
-    JSONObject response;
 
 
-    public ClientController(User user, String response) {
+    public ClientController(User user) {
         this.user = user;
-        this.response = new JSONObject(response);
     }
 
     private User login(JSONObject response) {
@@ -17,6 +16,8 @@ public class ClientController {
         if (response.getBoolean("status")) {
             this.user.username = response.getString("username");
             this.user.email = response.getString("email");
+            this.user.regNo = response.getString("regNo");
+            this.user.schoolName = response.getString("schoolName");
             this.user.isStudent = response.getBoolean("isStudent");
             this.user.isAuthenticated = response.getBoolean("isAuthenticated");
             this.user.output = "[+] Successfully logged in as a " + this.user.username + (this.user.isStudent ? "(student)" : "(representative)");
@@ -51,18 +52,46 @@ public class ClientController {
         return new User();
     }
 
-    private User viewApplicants() {
+    private User viewApplicants(JSONObject response) {
         // logic to interpret server response in attempt to view applicants
-        return new User();
+        JSONArray participants = new JSONArray(response.getString("applicants"));
+
+        if (participants.isEmpty()) {
+            this.user.output = "[-] No pending participant registration requests";
+            return this.user;
+        }
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(this.user.schoolName.strip().toUpperCase() + " (registration number: " + this.user.regNo + ")\n");
+        stringBuilder.append("\n");
+        stringBuilder.append("Pending applicants:\n");
+
+        int count = 1;
+        for (int i = 0; i < participants.length(); i++) {
+            JSONObject participant = new JSONObject(((JSONObject) participants.get(i)).toString(4));
+            stringBuilder.append(count + ". " + participant.getString("firstname") + " " + participant.getString("lastname") + " " + participant.getString("emailAddress") + "\n");
+            count++;
+        }
+
+        stringBuilder.append("\n");
+        stringBuilder.append("Confirm a student using the commands\n");
+        stringBuilder.append(" - confirm yes <username>\n");
+        stringBuilder.append(" - confirm no <username>\n");
+
+        this.user.output = stringBuilder.toString();
+
+        return this.user;
     }
 
-    public User exec() {
-        switch (this.response.get("command").toString()) {
+    public User exec(String responseData) {
+        JSONObject response = new JSONObject(responseData);
+        switch (response.get("command").toString()) {
             case "login" -> {
-                return this.login(this.response);
+                return this.login(response);
             }
             case "register" -> {
-                return this.register(this.response);
+                return this.register(response);
             }
             case "attemptChallenge" -> {
                 return this.attemptChallenge();
@@ -74,7 +103,7 @@ public class ClientController {
                 return this.confirm();
             }
             case "viewApplicants" -> {
-                return this.viewApplicants();
+                return this.viewApplicants(response);
             }
             default -> throw new IllegalStateException("Invalid response");
         }

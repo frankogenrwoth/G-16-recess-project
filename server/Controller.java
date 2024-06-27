@@ -31,6 +31,10 @@ public class Controller {
         while (participantResultSet.next()) {
             if (username.equals(participantResultSet.getString("username")) && email.equals(participantResultSet.getString("emailAddress"))) {
                 // there is a match here
+
+                String regNo = participantResultSet.getString("regNo");
+
+                clientResponse.put("regNo", regNo);
                 clientResponse.put("isStudent", true);
                 clientResponse.put("isAuthenticated", true);
                 clientResponse.put("status", true);
@@ -45,6 +49,12 @@ public class Controller {
         while (representativeResultSet.next()) {
             if (username.equals(representativeResultSet.getString("representativeName")) && email.equals(representativeResultSet.getString("representativeEmail"))) {
                 // there is a match
+
+                String schoolName = representativeResultSet.getString("name");
+                String regNo = representativeResultSet.getString("regNo");
+
+                clientResponse.put("schoolName", schoolName);
+                clientResponse.put("regNo", regNo);
                 clientResponse.put("isStudent", false);
                 clientResponse.put("isAuthenticated", true);
                 clientResponse.put("status", true);
@@ -106,9 +116,20 @@ public class Controller {
         return new JSONObject();
     }
 
-    private JSONObject viewApplicants(JSONObject obj) {
+    private JSONObject viewApplicants(JSONObject obj) throws IOException {
         // logic to confirm registered students (representatives, isAuthenticated)
-        return new JSONObject();
+        String regNo = obj.getString("regNo");
+
+        LocalStorage localStorage = new LocalStorage("participants.json");
+
+        String participants = localStorage.filterParticipantsByRegNo(regNo);
+
+        JSONObject clientResponse = new JSONObject();
+        clientResponse.put("command", "viewApplicants");
+        clientResponse.put("applicants", participants);
+
+
+        return clientResponse;
     }
 
     public JSONObject run() throws IOException, SQLException, ClassNotFoundException {

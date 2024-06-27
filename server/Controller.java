@@ -31,6 +31,10 @@ public class Controller {
         while (participantResultSet.next()) {
             if (username.equals(participantResultSet.getString("username")) && email.equals(participantResultSet.getString("emailAddress"))) {
                 // there is a match here
+
+                String regNo = participantResultSet.getString("regNo");
+
+                clientResponse.put("regNo", regNo);
                 clientResponse.put("isStudent", true);
                 clientResponse.put("isAuthenticated", true);
                 clientResponse.put("status", true);
@@ -45,6 +49,10 @@ public class Controller {
         while (representativeResultSet.next()) {
             if (username.equals(representativeResultSet.getString("representativeName")) && email.equals(representativeResultSet.getString("representativeEmail"))) {
                 // there is a match
+
+                String regNo = representativeResultSet.getString("regNo");
+
+                clientResponse.put("regNo", regNo);
                 clientResponse.put("isStudent", false);
                 clientResponse.put("isAuthenticated", true);
                 clientResponse.put("status", true);

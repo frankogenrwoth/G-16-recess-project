@@ -32,7 +32,7 @@ public class ServerThread {
         }
 
         // load data into a json format
-        JSONObject jsonObject = new JSONObject(clientIn.toString());
+        JSONObject jsonObject = new JSONObject(clientIn.toString().strip());
         return jsonObject;
     }
 

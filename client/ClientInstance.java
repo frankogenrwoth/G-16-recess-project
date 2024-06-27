@@ -61,7 +61,7 @@ public class ClientInstance {
                     ClientController clientController = new ClientController(user, response);
                     this.user = clientController.exec();
 
-                    System.out.println("response: " + user.output);
+                    System.out.println("\n" + user.output + "\n");
 
                 } else {
                     System.out.println(serializedCommand);

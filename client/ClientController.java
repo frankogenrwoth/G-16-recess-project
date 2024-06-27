@@ -17,9 +17,14 @@ public class ClientController {
         return new User();
     }
 
-    private User register() {
+    private User register(JSONObject response) {
         // logic to interpret server response in attempt to register
-        return new User();
+        if (response.getBoolean("status")) {
+            this.user.output = "success:: " + response.get("reason").toString();
+        } else {
+            this.user.output = "fail:: " + response.get("reason").toString();
+        }
+        return this.user;
     }
 
     private User attemptChallenge() {
@@ -48,7 +53,7 @@ public class ClientController {
                 return this.login();
             }
             case "register" -> {
-                return this.register();
+                return this.register(this.response);
             }
             case "attemptChallenge" -> {
                 return this.attemptChallenge();

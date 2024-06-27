@@ -43,9 +43,9 @@ public class Serializer {
     public String register(String[] arr) {
         JSONObject obj = new JSONObject();
         obj.put("command", "register");
-        obj.put("isAuthenticated", false);
+        obj.put("isAuthenticated", user.isAuthenticated);
         obj.put("tokens", arr);
-        obj.put("isStudent", true);
+        obj.put("isStudent", user.isStudent);
 
 
         return obj.toString(4);

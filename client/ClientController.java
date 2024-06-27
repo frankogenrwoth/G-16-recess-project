@@ -47,9 +47,14 @@ public class ClientController {
         return new User();
     }
 
-    private User confirm() {
+    private User confirm(JSONObject response) {
         // logic to interpret server response in attempt to confirm
-        return new User();
+        if (response.getBoolean("status")) {
+            this.user.output = response.getString("reason");
+        } else {
+            this.user.output = response.getString("reason");
+        }
+        return this.user;
     }
 
     private User viewApplicants(JSONObject response) {
@@ -100,7 +105,7 @@ public class ClientController {
                 return this.viewChallenges();
             }
             case "confirm" -> {
-                return this.confirm();
+                return this.confirm(response);
             }
             case "viewApplicants" -> {
                 return this.viewApplicants(response);

@@ -35,6 +35,7 @@ public class Controller {
                 String regNo = participantResultSet.getString("regNo");
 
                 clientResponse.put("regNo", regNo);
+                clientResponse.put("schoolName", "undefined");
                 clientResponse.put("isStudent", true);
                 clientResponse.put("isAuthenticated", true);
                 clientResponse.put("status", true);
@@ -111,9 +112,33 @@ public class Controller {
         return new JSONObject();
     }
 
-    private JSONObject confirm(JSONObject obj) {
+    private JSONObject confirm(JSONObject obj) throws IOException, SQLException, ClassNotFoundException {
         // logic to confirm registered students (representatives, isAuthenticated)
-        return new JSONObject();
+        LocalStorage localStorage = new LocalStorage("participants.json");
+
+        String username = obj.getString("username");
+        JSONObject participant = localStorage.readEntryByUserName(username);
+        JSONObject clientResponse = new JSONObject();
+        clientResponse.put("command", "confirm");
+
+        if (participant.isEmpty()) {
+            clientResponse.put("status", false);
+            clientResponse.put("reason", "Invalid command check the username provided");
+            return clientResponse;
+        }
+
+        DbConnection dbConnection = new DbConnection();
+        if (obj.getBoolean("confirm")) {
+            dbConnection.createParticipant(participant.getString("username"), participant.getString("firstname"), participant.getString("lastname"), participant.getString("emailAddress"), participant.getString("dob"), participant.getString("regNo"), participant.getString("imagePath"));
+            localStorage.deleteEntryByUserName(username);
+            clientResponse.put("reason", participant.getString("firstname") + " " + participant.getString("firstname") + " " + participant.getString("emailAddress") + " confirmed successfully");
+        } else {
+            dbConnection.createParticipantRejected(participant.getString("username"), participant.getString("firstname"), participant.getString("lastname"), participant.getString("emailAddress"), participant.getString("dob"), participant.getString("regNo"), participant.getString("imagePath"));
+            localStorage.deleteEntryByUserName(username);
+            clientResponse.put("reason", participant.getString("firstname") + " " + participant.getString("firstname") + " " + participant.getString("emailAddress") + " rejected successfully");
+        }
+        clientResponse.put("status", true);
+        return clientResponse;
     }
 
     private JSONObject viewApplicants(JSONObject obj) throws IOException {

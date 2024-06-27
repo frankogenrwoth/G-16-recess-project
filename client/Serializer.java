@@ -76,10 +76,10 @@ public class Serializer {
     public String confirm(String[] arr) {
         JSONObject obj = new JSONObject();
         obj.put("command", "confirm");
-        obj.put("isAuthenticated", false);
+        obj.put("username", arr[2]);
+        obj.put("regNo", this.user.regNo);
+        obj.put("confirm", (arr[1].toLowerCase().equals("yes")) ? true : false);
         obj.put("tokens", arr);
-        obj.put("isStudent", true);
-
 
         return obj.toString(4);
     }
@@ -96,8 +96,8 @@ public class Serializer {
     }
 
     public String logout() {
-        this.user.isAuthenticated = false;
-        return null;
+        this.user.logout();
+        return "Successfully logged out";
     }
 
     public String serialize(String command) {

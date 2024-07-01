@@ -107,9 +107,29 @@ public class Controller {
         return new JSONObject();
     }
 
-   private JSONObject viewChallenges(JSONObject obj) {
-        // logic to view challenges available and can be attempted (student, isAuthenticated)
-        return new JSONObject();
+   private JSONObject viewChallenges(JSONObject obj) throws SQLException, ClassNotFoundException {
+        JSONObject clientResponse = new JSONObject();
+
+        DbConnection dbConnection = new DbConnection();
+        ResultSet availableChallenges = dbConnection.getChallenges();
+        JSONArray challenges = new JSONArray();
+
+        while (availableChallenges.next()) {
+            JSONObject challenge = new JSONObject();
+            challenge.put("id", availableChallenges.getInt("challenge_id"));
+            challenge.put("name", availableChallenges.getString("challenge_name"));
+            challenge.put("difficulty", availableChallenges.getString("difficulty"));
+            challenge.put("time_allocation", availableChallenges.getInt("time_allocation"));
+            challenge.put("starting_date", availableChallenges.getDate("starting_date"));
+            challenge.put("closing_date", availableChallenges.getDate("closing_date"));
+
+            challenges.put(challenge);
+        }
+
+        clientResponse.put("command", "viewChallenges");
+        clientResponse.put("challenges", challenges.toString());
+
+        return clientResponse;
     }
 
     private JSONObject confirm(JSONObject obj) throws IOException, SQLException, ClassNotFoundException {
@@ -169,7 +189,7 @@ public class Controller {
 
             case "viewChallenges":
                 // call login logic
-                return this.viewApplicants(this.obj);
+                return this.viewChallenges(this.obj);
 
             case "attemptChallenge":
                 // call login logic
